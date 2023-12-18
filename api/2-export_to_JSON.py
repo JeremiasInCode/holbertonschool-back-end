@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """Starts a Flask web app"""
 
+import json
 import requests
 import sys
-import json
 
 
 def get_employee_todo_progress(employee_id):
@@ -28,7 +28,8 @@ def get_employee_todo_progress(employee_id):
         data.append(json_data)
 
     filename = f'{employee_id}.json'
-    with open (filename, 'w') as f:
+
+    with open(filename, 'w') as f:
         json.dump({f"{employee_id}": data}, f)
 
 
