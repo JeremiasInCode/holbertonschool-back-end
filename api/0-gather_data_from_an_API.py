@@ -1,29 +1,30 @@
 #!/usr/bin/python3
-"""Starts a Flask web app"""
+""" given employee ID, returns information TODO list progress."""
 
 import requests
 import sys
 
 
 def get_employee_todo_progress(employee_id):
-    """ get all employee """
-    base_url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(f'{base_url}/users/{employee_id}')
-    todos = requests.get(f'{base_url}/todos?userId={employee_id}')
+    """ Get employee todo"""
 
-    user_data = user.json()
-    todos_data = todos.json()
+    base_url = 'https://jsonplaceholder.typicode.com'
+    user_response = requests.get(f'{base_url}/users/{employee_id}')
+    todos_response = requests.get(f'{base_url}/todos?userId={employee_id}')
+
+    user_data = user_response.json()
+    todos_data = todos_response.json()
 
     employee_name = user_data['name']
-    all_employee = len(todos_data)
-    tasks = sum(1 for todo in todos_data if todo['completed'])
+    total_tasks = len(todos_data)
+    done_tasks = sum(1 for todo in todos_data if todo['completed'])
 
-    print(f"Employee {employee_name} is done with tasks "
-          f"({tasks}/{all_employee}):")
+    print(f"Employee {employee_name} is done with tasks\
+({done_tasks}/{total_tasks}):")
 
-    for todo in todos_data:
-        if todo['completed']:
-            print(f"\t {todo['title']}")
+    for i in todos_data:
+        if i['completed']:
+            print(f"\t {i['title']}")
 
 
 if __name__ == '__main__':
