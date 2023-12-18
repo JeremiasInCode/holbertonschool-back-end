@@ -1,34 +1,36 @@
 #!/usr/bin/python3
-"""Starts a Flask web app"""
+"""
+Employee TODO List Progress Script
+"""
 
+import json
 import requests
-import sys
+from sys import argv
+user_id = None
+try:
+    user_id = argv[1]
+except Exception as e:
+    pass
 
+todos_requests = requests.get(f"https://jsonplaceholder"
+                              f".typicode.com/users/{user_id}/todos")
 
-def get_employee_todo_progress(employee_id):
-    """ get all employee """
-    base_url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(f'{base_url}/users/{employee_id}')
-    todos = requests.get(f'{base_url}/todos?userId={employee_id}')
+user_request = requests.get(f"https://jsonplaceholder"
+                            f".typicode.com/users/{user_id}")
 
-    user_data = user.json()
-    todos_data = todos.json()
+dicted_user = json.loads(user_request.text)
+dicted_todos = json.loads(todos_requests.text)
+completed_tasks = []
 
-    employee_name = user_data['name']
-    all_employee = len(todos_data)
-    tasks = sum(1 for todo in todos_data if todo['completed'])
+for x in dicted_todos:
+    if x.get('completed') is True:
+        completed_tasks.append(x.get('completed'))
+print(f"Employee {dicted_user.get('name')}"
+      f" is done with tasks({len(completed_tasks)}/{len(dicted_todos)}):")
 
-    print(f"Employee {employee_name} is done with tasks "
-          f"({tasks}/{all_employee}):")
-
-    for todo in todos_data:
-        if todo['completed']:
-            print(f"\t {todo['title']}")
-
-
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <employee_id>")
-    else:
-        employee_id = int(sys.argv[1])
-        get_employee_todo_progress(employee_id)
+if __name__ == "__main__":
+    """only execute the code when is main"""
+    for task in dicted_todos:
+        if task.get('completed') is True:
+            print('\t ', end="")
+            print(task.get('title'))
