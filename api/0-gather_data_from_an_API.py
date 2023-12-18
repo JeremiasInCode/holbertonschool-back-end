@@ -12,18 +12,18 @@ def get_employee_todo_progress(employee_id):
     user = requests.get(f'{base_url}/users/{employee_id}')
     todos = requests.get(f'{base_url}/todos?userId={employee_id}')
 
-    # Imprime la respuesta de la solicitud a la API de usuarios
-    print("User API response:", user.text)
-
     user_data = user.json()
     todos_data = todos.json()
 
-    employee_name = user_data.get('name')  # Usa get() para manejar claves ausentes
+    employee_name = user_data['name']
     all_employee = len(todos_data)
     tasks = sum(1 for todo in todos_data if todo['completed'])
 
     print(f"Employee {employee_name} is done with tasks"
           f" ({tasks}/{all_employee}):")
+
+    # Agregado para imprimir en el formato esperado por el nuevo test
+    print(f"To Do Count: {tasks}/{all_employee}")
 
     for todo in todos_data:
         if todo['completed']:
