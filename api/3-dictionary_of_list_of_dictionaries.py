@@ -1,29 +1,8 @@
 #!/usr/bin/python3
-"""
-Check student JSON output
-"""
+""" given employee ID, returns information about his/her TODO list progress."""
 
 import json
 import requests
-
-users_url = "https://jsonplaceholder.typicode.com/users"
-todos_url = "https://jsonplaceholder.typicode.com/todos"
-
-
-def user_info():
-    """ Check user info """
-    
-    with open('todo_all_employees.json', 'r') as f:
-        student_json = json.load(f)
-
-    correct_json = requests.get(users_url).json()
-
-    for correct_entry in correct_json:
-        if correct_entry['id'] not in student_json:
-            print("User ID {} Found: Incorrect".format(correct_entry['id']))
-            return
-    
-    print("All users found: OK")
 
 
 def get_employee_todo_progress(employee, base_url):
@@ -50,11 +29,8 @@ if __name__ == '__main__':
 
     json_form = {}
     for employee in user_data:
-        key = employee['id']
+        key = f"{employee['id']}"
         json_form[key] = get_employee_todo_progress(employee, base_url)
 
     with open("todo_all_employees.json", 'w') as f:
         json.dump(json_form, f)
-
-    # Check user info
-    user_info()
