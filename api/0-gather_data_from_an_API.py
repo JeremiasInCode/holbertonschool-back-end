@@ -1,38 +1,31 @@
 #!/usr/bin/python3
-"""Starts a Flask web app"""
-
+"""Employee Task API"""
+import json
 import requests
-import sys
+from sys import argv
 
+if __name__ == "__main__":
 
-def get_employee_todo_progress(employee_id):
-    """ get all employee """
+    if len(argv) != 2:
+        exit()
 
-    base_url = "https://jsonplaceholder.typicode.com/"
-    user = requests.get(f'{base_url}/users/{employee_id}')
-    todos = requests.get(f'{base_url}/todos?userId={employee_id}')
+    user_req = requests.get(
+        'https://jsonplaceholder.typicode.com/users/{}'.format(argv[1]))
+    user = json.loads(user_req.text)
+    user_todo_req = requests.get(
+        'https://jsonplaceholder.typicode.com/todos?userId={}'.format(argv[1]))
+    user_todo = json.loads(user_todo_req.text)
 
-    user_data = user.json()
-    todos_data = todos.json()
+    completed = 0
+    not_completed = 0
+    for task in user_todo:
+        if task["completed"]:
+            completed += 1
+        else:
+            not_completed += 1
 
-    employee_name = user_data['name']
-    all_employee = len(todos_data)
-    tasks = sum(1 for todo in todos_data if todo['completed'])
-
-    print(f"Employee {employee_name} is done with tasks"
-          f" ({tasks}/{all_employee}):")
-
-    # Agregado para imprimir en el formato esperado por el nuevo test
-    print(f"To Do Count: {tasks}/{all_employee}")
-
-    for todo in todos_data:
-        if todo['completed']:
-            print(f"\t {todo['title']}")
-
-
-if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("Usage: python script.py <employee_id>")
-    else:
-        employee_id = int(sys.argv[1])
-        get_employee_todo_progress(employee_id)
+    print(f"Employee {user['name']} is done with tasks"
+          f"({completed}/{not_completed + completed}):")
+    for task in user_todo:
+        if task["completed"]:
+            print(f'\t {task["title"]}')
