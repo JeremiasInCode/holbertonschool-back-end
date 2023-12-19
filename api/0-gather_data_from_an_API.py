@@ -9,17 +9,17 @@ from urllib.request import urlopen
 def get_employee_todo_progress(employee_id):
     api_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
     base_url = "https://jsonplaceholder.typicode.com/todos?"
-    all_url = f"{base_url}userId={employee_id}"
+    todo_url = f"{base_url}userId={employee_id}"
 
     with urlopen(api_url) as response:
         user_data = json.load(response)
 
-    with urlopen(all_url) as response:
-        all_users = json.load(response)
+    with urlopen(todo_url) as response:
+        todo_data = json.load(response)
 
     employee_name = user_data.get("name")
-    completed_tasks = [task for task in all_users if task.get("completed")]
-    total_tasks = len(all_users)
+    completed_tasks = [task for task in todo_data if task.get("completed")]
+    total_tasks = len(todo_data)
 
     output = [
         f"Employee {employee_name} is done with tasks("
