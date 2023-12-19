@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Starts a Flask web app"""
+"""Returns information about his/her TODO list progress using requests."""
 
 import json
 import sys
