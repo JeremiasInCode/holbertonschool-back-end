@@ -1,25 +1,47 @@
 #!/usr/bin/python3
-"""Returns information about his/her TODO list progress using urllib."""
+"""
+This script fetches information about an employee's TODO list progress.
+Usage: python script_name.py employee_id
+"""
 
 import requests
-from sys import argv
+import sys
 
 
-if __name__ == '__main__':
-    """
-        Main Function of the program.
-    """
+def get_employee_todo_progress(employee_id):
+    url = 'https://jsonplaceholder.typicode.com'
+    base_url = f'{url}/users/{employee_id}'
+    todos_url = f'{url}/todos?userId={employee_id}'
 
-    api_url = f'https://jsonplaceholder.typicode.com/'
+    try:
+        employee_info = requests.get(base_url).json()
+        todos = requests.get(todos_url).json()
 
-    user_id = int(argv[1])
-    user_data = requests.get(api_url + f'users/{user_id}').json()
-    user_tasks = requests.get(api_url + f'users/{user_id}/todos').json()
+        # Filter completed tasks
+        completed_tasks = [
+            task['title'] for task in todos if task['completed']
+            ]
+        total_tasks = len(todos)
 
-    user_completed_tasks = [i for i in user_tasks if i['completed']]
+        # Display progress
+        output = [
+            f"Employee {employee_info['name']} is done with tasks"
+            f"({len(completed_tasks)}/{total_tasks}):"
+        ]
 
-    print(f'Employee {user_data["name"]} is done with ', end='')
-    print(f'tasks({len(user_completed_tasks)}/{len(user_tasks)}):')
+        for task in completed_tasks:
+            output.append(f"\t {task}")
 
-    for task in user_completed_tasks:
-        print("\t " + task["title"])
+        return "\n".join(output)
+
+    except requests.RequestException as e:
+        return f"Error: {e}"
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python script_name.py employee_id")
+        sys.exit(1)
+
+    employee_id = int(sys.argv[1])
+    print(get_employee_todo_progress(employee_id))
